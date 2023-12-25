@@ -19,7 +19,7 @@ conn = ps.connect(
 
 #função que insere dados no banco
 def update_database(data):
-    table  = 'ipea.preco_petroleo_brent'
+    table  = 'ipea.preco_brent'
     tuples = list(set([tuple(x) for x in data.to_numpy()])) #cria lista de tuplas a partir dos dados do DataFrame
     columns = ','.join(list(data.columns)) #colunas do DataFrame separadas por vírgula
     insert = 'INSERT INTO %s(%s) VALUES(%%s,%%s)' % (table, columns) #SQL para inserção de dados
@@ -27,11 +27,11 @@ def update_database(data):
     #insere dados
     try:
         #testa se base de dados local é a mesma do web scrapping, excluindo dados caso seja para não haver duplicação em jobs de teste
-        sql = 'SELECT * FROM ipea.preco_petroleo_brent'
+        sql = 'SELECT * FROM ipea.preco_brent'
         existing_database_data = sqlio.read_sql_query(sql, conn)
         print(f'Número de registro atuais na base local: {existing_database_data.shape[0]}')
         if existing_database_data.shape[0] == data.shape[0]:
-            clear = 'TRUNCATE TABLE ipea.preco_petroleo_brent'
+            clear = 'TRUNCATE TABLE ipea.preco_brent'
             cursor.execute(clear)
             conn.commit() 
         else:
@@ -84,7 +84,7 @@ if res.status_code == 200:
     new_data['Preço - petróleo bruto - Brent (FOB)'] = new_data['Preço - petróleo bruto - Brent (FOB)'].astype(int)/100
     new_data.rename(columns={'Data': 'data', 'Preço - petróleo bruto - Brent (FOB)': 'preco'}, inplace=True)
     #verifica existência de arquivo csv, carregando-o ou atribuindo o DataFrame do HTML
-    path = 'dados/preco_petroleo.csv'
+    path = 'dados/preco_brent.csv'
     try:
         existing_data = pd.read_csv(path)
     except FileNotFoundError:
