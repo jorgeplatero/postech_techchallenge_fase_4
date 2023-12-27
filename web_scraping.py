@@ -100,7 +100,7 @@ else:
     #exibe erro HTTP
     print('Falha ao acessar a página: Status Code', res.status_code)
 
-#realiza previsões
+#realizando previsões
     
 #função que insere dados do forecast no banco
 def update_forecast(forecast):
@@ -126,7 +126,7 @@ df_statsforecast['unique_id'] = 'Preco'
 df_statsforecast.dropna(inplace=True)
 
 #definindo dados de treino
-treino = df_statsforecast.loc[(df_statsforecast['ds'] >= '2000-01-01') & (df_statsforecast['ds'] <= df_statsforecast['ds'].loc[0])] #novos dados de treino
+treino = df_statsforecast.loc[(df_statsforecast['ds'] >= '2000-01-01') & (df_statsforecast['ds'] <= df_statsforecast['ds'].loc[0])] #dados de treino
 h = 5
 
 #implementando modelo
@@ -134,6 +134,7 @@ modelo = StatsForecast(models=[AutoARIMA(season_length=5)], freq='B', n_jobs=-1)
 modelo.fit(treino)
 forecast = modelo.predict(h=5, level=[90])
 forecast = forecast[['ds', 'AutoARIMA']].reset_index(drop=True).rename(columns={'ds': 'data', 'AutoARIMA': 'preco_previsto'})
+forecast['preco_previsto'] = [int(n * 100) / 100 for n in forecast['preco_previsto']]
 
 #atualizando tabela de forecast no banco local
 update_forecast(forecast)
