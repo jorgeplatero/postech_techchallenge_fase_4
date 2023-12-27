@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup #inspeciona e extrai conteúdo HTML, umas das prin
 import pandas as pd
 import psycopg2 as ps
 import pandas.io.sql as sqlio
+import joblib
+from statsforecast import StatsForecast
+from statsforecast.models import AutoARIMA
 import warnings
 
 
@@ -29,7 +32,7 @@ def update_database(data):
         #testa se base de dados local é a mesma do web scrapping, excluindo dados caso seja para não haver duplicação em jobs de teste
         sql = 'SELECT * FROM ipea.preco_brent'
         existing_database_data = sqlio.read_sql_query(sql, conn)
-        print(f'Número de registro atuais na base local: {existing_database_data.shape[0]}')
+        print(f'Número de registros atuais na base local: {existing_database_data.shape[0]}')
         if existing_database_data.shape[0] == data.shape[0]:
             clear = 'TRUNCATE TABLE ipea.preco_brent'
             cursor.execute(clear)
@@ -96,6 +99,44 @@ if res.status_code == 200:
 else:
     #exibe erro HTTP
     print('Falha ao acessar a página: Status Code', res.status_code)
+
+#realiza previsões
+    
+#função que insere dados do forecast no banco
+def update_forecast(forecast):
+    table  = 'ipea.preco_previsto_brent'
+    tuples = list(set([tuple(x) for x in forecast.to_numpy()])) #cria lista de tuplas a partir dos dados do DataFrame
+    columns = ','.join(list(forecast.columns)) #colunas do DataFrame separadas por vírgula
+    insert = 'INSERT INTO %s(%s) VALUES(%%s,%%s)' % (table, columns) #SQL para inserção de dados
+    cursor = conn.cursor() #cria cursor
+    #insere dados
+    try:
+        clear = 'TRUNCATE TABLE ipea.preco_previsto_brent'
+        cursor.execute(clear)
+        conn.commit()
+        cursor.executemany(insert, tuples)
+        conn.commit()
+    except (Exception, ps.DatabaseError) as error:
+        print('Error: %s' % error)
+        conn.rollback()
+
+#preparando dados para a biblioteca statsforecast
+df_statsforecast = updated_data[['data', 'preco']].rename(columns={'data': 'ds', 'preco': 'y'})
+df_statsforecast['unique_id'] = 'Preco'
+df_statsforecast.dropna(inplace=True)
+
+#definindo dados de treino
+treino = df_statsforecast.loc[(df_statsforecast['ds'] >= '2000-01-01') & (df_statsforecast['ds'] <= df_statsforecast['ds'].loc[0])] #novos dados de treino
+h = 5
+
+#implementando modelo
+modelo = StatsForecast(models=[AutoARIMA(season_length=5)], freq='B', n_jobs=-1)
+modelo.fit(treino)
+forecast = modelo.predict(h=5, level=[90])
+forecast = forecast[['ds', 'AutoARIMA']].reset_index(drop=True).rename(columns={'ds': 'data', 'AutoARIMA': 'preco_previsto'})
+
+#atualizando tabela de forecast no banco local
+update_forecast(forecast)
 
 #encerra conexão com o banco
 conn.close() 
