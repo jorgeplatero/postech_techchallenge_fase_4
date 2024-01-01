@@ -1,9 +1,9 @@
 import requests #realiza requisições em base de dados via HTTP 
 from bs4 import BeautifulSoup #inspeciona e extrai conteúdo HTML, umas das principais ferramentas de web scraping do Python
 import pandas as pd
+import numpy as np
 import psycopg2 as ps
 import pandas.io.sql as sqlio
-import joblib
 from statsforecast import StatsForecast
 from statsforecast.models import AutoARIMA
 import warnings
@@ -11,16 +11,24 @@ import warnings
 
 warnings.filterwarnings(action = 'ignore')
 
-#conectando-se ao banco
-conn = ps.connect(
-    dbname = 'postech',
-    user ='postgres',
-    password = 'postgres',
-    host = 'localhost',
-    port = '5432'
-)
+#função que insere dados do forecast no banco local
+def update_forecast(forecast):
+    table  = 'ipea.preco_previsto_brent'
+    tuples = list(set([tuple(x) for x in forecast.to_numpy()])) #cria lista de tuplas a partir dos dados do DataFrame
+    columns = ','.join(list(forecast.columns)) #colunas do DataFrame separadas por vírgula
+    insert = 'INSERT INTO %s(%s) VALUES(%%s,%%s)' % (table, columns) #SQL para inserção de dados
+    cursor = conn.cursor() #cria cursor
+    #insere dados
+    try:
+        clear = 'TRUNCATE TABLE ipea.preco_previsto_brent'
+        cursor.execute(clear)
+        cursor.executemany(insert, tuples)
+        conn.commit()
+    except (Exception, ps.DatabaseError) as error:
+        print('Error: %s' % error)
+        conn.rollback()
 
-#função que insere dados no banco
+#função que insere e atualiza dados do IPEA no banco local
 def update_database(data):
     table  = 'ipea.preco_brent'
     tuples = list(set([tuple(x) for x in data.to_numpy()])) #cria lista de tuplas a partir dos dados do DataFrame
@@ -45,12 +53,14 @@ def update_database(data):
         print('Error: %s' % error)
         conn.rollback()
 
-#função que atualiza o DataFrame com dados atualizados
+
+#função que atualiza o DataFrame com dados atualizados do IPEA
 def update_dataframe(existing_data, new_data):
     #realiza busca da data mais recente do DataFrame atual
     last_date = existing_data['data'].max()
-    #filtra registros mais recentes que o DataFrame atual no DataFrame atualizado 
+    #filtra registros mais recentes que o DataFrame atual no DataFrame atualizado
     new_rows = new_data[new_data['data'] > last_date]
+    new_rows['data'] = new_rows['data'].astype(str).replace(' 00:00:00', '')
     #concatena os novos dados no DataFrame atual, se houver novos registros na requisição
     if not new_rows.empty:
         #realiza carga incremental no csv
@@ -65,6 +75,54 @@ def update_dataframe(existing_data, new_data):
         print(f'Não constam novos registros na base do IPEA')
         update_database(updated_data)
     return updated_data
+
+
+#função que insere dados do forecast no banco local
+def update_forecast(forecast):
+    table  = 'ipea.preco_previsto_brent'
+    tuples = list(set([tuple(x) for x in forecast.to_numpy()])) #cria lista de tuplas a partir dos dados do DataFrame
+    columns = ','.join(list(forecast.columns)) #colunas do DataFrame separadas por vírgula
+    insert = 'INSERT INTO %s(%s) VALUES(%%s,%%s)' % (table, columns) #SQL para inserção de dados
+    cursor = conn.cursor() #cria cursor
+    #insere dados
+    try:
+        clear = 'TRUNCATE TABLE ipea.preco_previsto_brent'
+        cursor.execute(clear)
+        cursor.executemany(insert, tuples)
+        conn.commit()
+    except (Exception, ps.DatabaseError) as error:
+        print('Error: %s' % error)
+        conn.rollback()
+
+
+#função para validação dos modelos
+def wmape(y_true, y_pred):
+    return np.abs(y_true - y_pred).sum() / np.abs(y_true).sum()
+
+
+#função que insere dados do forecast no banco local
+def update_wmape(data, wmape):
+    cursor = conn.cursor() #cria cursor
+    #insere dados
+    try:
+        sql = f'INSERT INTO ipea.wmape (data, wmape) VALUES ({data}, {wmape})'
+        cursor.execute(sql)
+        conn.commit()
+    except (Exception, ps.DatabaseError) as error:
+        print('Error: %s' % error)
+        conn.rollback()
+
+    
+#conectando-se ao banco
+conn = ps.connect(
+    dbname = 'postech',
+    user ='postgres',
+    password = 'postgres',
+    host = 'localhost',
+    port = '5432'
+)
+
+#realizando web scraping
 
 #url do IPEA
 url = 'http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view'
@@ -81,7 +139,7 @@ if res.status_code == 200:
     #seleciona dados úteis da tabela
     new_data.columns = new_data.iloc[0]
     new_data = new_data.drop(0)
-    #tratando tipagem e renomeando colunas]
+    #tratando tipagem e renomeando colunas
     new_data['Data'] = new_data['Data'].str.replace('/','-')
     new_data['Data'] = pd.to_datetime(new_data['Data'], format='%d-%m-%Y')
     new_data['Preço - petróleo bruto - Brent (FOB)'] = new_data['Preço - petróleo bruto - Brent (FOB)'].astype(int)/100
@@ -92,9 +150,9 @@ if res.status_code == 200:
         existing_data = pd.read_csv(path)
     except FileNotFoundError:
         existing_data = new_data
-    #atualiza os dados
+    #atualiza DataFrame
     updated_data = update_dataframe(existing_data, new_data)
-    #salva dados atualizados no arquivo csv
+    #exporta dados atualizados em arquivo csv
     updated_data.to_csv(path, index=False)
 else:
     #exibe erro HTTP
@@ -102,24 +160,6 @@ else:
 
 #realizando previsões
     
-#função que insere dados do forecast no banco
-def update_forecast(forecast):
-    table  = 'ipea.preco_previsto_brent'
-    tuples = list(set([tuple(x) for x in forecast.to_numpy()])) #cria lista de tuplas a partir dos dados do DataFrame
-    columns = ','.join(list(forecast.columns)) #colunas do DataFrame separadas por vírgula
-    insert = 'INSERT INTO %s(%s) VALUES(%%s,%%s)' % (table, columns) #SQL para inserção de dados
-    cursor = conn.cursor() #cria cursor
-    #insere dados
-    try:
-        clear = 'TRUNCATE TABLE ipea.preco_previsto_brent'
-        cursor.execute(clear)
-        conn.commit()
-        cursor.executemany(insert, tuples)
-        conn.commit()
-    except (Exception, ps.DatabaseError) as error:
-        print('Error: %s' % error)
-        conn.rollback()
-
 #preparando dados para a biblioteca statsforecast
 df_statsforecast = updated_data[['data', 'preco']].rename(columns={'data': 'ds', 'preco': 'y'})
 df_statsforecast['unique_id'] = 'Preco'
@@ -138,6 +178,11 @@ forecast['preco_previsto'] = [int(n * 100) / 100 for n in forecast['preco_previs
 
 #atualizando tabela de forecast no banco local
 update_forecast(forecast)
+
+#obtendo wmape
+
+wmape = wmape(updated_data['preco'].head().values, forecast['preco_previsto'].values)
+update_wmape(forecast['data'].iloc[0], wmape)
 
 #encerra conexão com o banco
 conn.close() 
