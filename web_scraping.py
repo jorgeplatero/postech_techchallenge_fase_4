@@ -161,7 +161,6 @@ else:
     #exibe erro HTTP
     print('Falha ao acessar a página: Status Code', res.status_code)
 
-
 #obtendo wmape
     
 try: #testa se há previsão ja realizada para calcular acurácia
@@ -172,14 +171,14 @@ except FileNotFoundError:
     print('Não há dados suficientes para calcular erro do modelo')
 
 #realizando previsões
-    
+
 #preparando dados para a biblioteca statsforecast
 df_statsforecast = updated_data[['data', 'preco']].rename(columns={'data': 'ds', 'preco': 'y'})
 df_statsforecast['unique_id'] = 'Preco'
 df_statsforecast.dropna(inplace=True)
 
 #definindo dados de treino
-treino = df_statsforecast.loc[(df_statsforecast['ds'] >= '2000-01-01')] #dados de treino ---
+treino = df_statsforecast.loc[(df_statsforecast['ds'] >= '2000-01-01')]
 h = 5
 
 #implementando modelo
