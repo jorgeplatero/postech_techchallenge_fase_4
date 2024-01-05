@@ -49,6 +49,8 @@ def update_database(data):
             pass
         cursor.executemany(insert, tuples)
         conn.commit()
+        existing_database_data = sqlio.read_sql_query(sql, conn)
+        print(f'Número de registros atualizados na base local: {existing_database_data.shape[0]}')
     except (Exception, ps.DatabaseError) as error:
         print('Error: %s' % error)
         conn.rollback()
@@ -61,18 +63,19 @@ def update_dataframe(existing_data, new_data):
     #filtra registros mais recentes que o DataFrame atual no DataFrame atualizado
     new_rows = new_data[new_data['data'] > last_date]
     new_rows['data'] = new_rows['data'].astype(str).replace(' 00:00:00', '')
+
     #concatena os novos dados no DataFrame atual, se houver novos registros na requisição
     if not new_rows.empty:
         #realiza carga incremental no csv
         updated_data = pd.concat([new_rows, existing_data], ignore_index=True)
         #realiza carga incremental no banco
-        print(f'Constam {new_rows.shape[0]} novos registros')
+        print(f'Constam {new_rows.shape[0]} novos registros na base do IPEA')
         update_database(new_rows)
     else:
         #realiza carga no csv
         updated_data = existing_data
         #realiza carga no banco
-        print(f'Não constam novos registros na base do IPEA')
+        print(f'Não constam novos registros na base do IPEA ou não há registros na base local')
         update_database(updated_data)
     return updated_data
 
@@ -97,15 +100,15 @@ def update_forecast(forecast):
 
 #função para validação dos modelos
 def wmape(y_true, y_pred):
-    return np.abs(y_true - y_pred).sum() / np.abs(y_true).sum()
+    return int((np.abs(y_true - y_pred).sum() / np.abs(y_true).sum()) * 100) / 100
 
 
 #função que insere dados do forecast no banco local
-def update_wmape(data, wmape):
+def update_wmape(wmape):
     cursor = conn.cursor() #cria cursor
     #insere dados
     try:
-        sql = f'INSERT INTO ipea.wmape (data, wmape) VALUES ({data}, {wmape})'
+        sql = f'INSERT INTO ipea.wmape(data, wmape) VALUES(cast(now() AS date), {wmape})'
         cursor.execute(sql)
         conn.commit()
     except (Exception, ps.DatabaseError) as error:
@@ -145,18 +148,28 @@ if res.status_code == 200:
     new_data['Preço - petróleo bruto - Brent (FOB)'] = new_data['Preço - petróleo bruto - Brent (FOB)'].astype(int)/100
     new_data.rename(columns={'Data': 'data', 'Preço - petróleo bruto - Brent (FOB)': 'preco'}, inplace=True)
     #verifica existência de arquivo csv, carregando-o ou atribuindo o DataFrame do HTML
-    path = 'dados/preco_brent.csv'
+    data_path = 'dados/preco_brent.csv'
     try:
-        existing_data = pd.read_csv(path)
+        existing_data = pd.read_csv(data_path)
     except FileNotFoundError:
         existing_data = new_data
     #atualiza DataFrame
     updated_data = update_dataframe(existing_data, new_data)
     #exporta dados atualizados em arquivo csv
-    updated_data.to_csv(path, index=False)
+    updated_data.to_csv(data_path, index=False)
 else:
     #exibe erro HTTP
     print('Falha ao acessar a página: Status Code', res.status_code)
+
+
+#obtendo wmape
+    
+try: #testa se há previsão ja realizada para calcular acurácia
+    last_forecast = pd.read_csv('dados/last_forecast.csv')
+    wmape = wmape(updated_data['preco'].head().values, last_forecast['preco_previsto'].values)
+    update_wmape(wmape)
+except FileNotFoundError:
+    print('Não há dados suficientes para calcular erro do modelo')
 
 #realizando previsões
     
@@ -166,7 +179,7 @@ df_statsforecast['unique_id'] = 'Preco'
 df_statsforecast.dropna(inplace=True)
 
 #definindo dados de treino
-treino = df_statsforecast.loc[(df_statsforecast['ds'] >= '2000-01-01') & (df_statsforecast['ds'] <= df_statsforecast['ds'].loc[0])] #dados de treino
+treino = df_statsforecast.loc[(df_statsforecast['ds'] >= '2000-01-01')] #dados de treino
 h = 5
 
 #implementando modelo
@@ -175,14 +188,12 @@ modelo.fit(treino)
 forecast = modelo.predict(h=5, level=[90])
 forecast = forecast[['ds', 'AutoARIMA']].reset_index(drop=True).rename(columns={'ds': 'data', 'AutoARIMA': 'preco_previsto'})
 forecast['preco_previsto'] = [int(n * 100) / 100 for n in forecast['preco_previsto']]
+#salvando dados previstos
+last_forecast_path = 'dados/last_forecast.csv'
+forecast.to_csv(last_forecast_path, index=False)
 
 #atualizando tabela de forecast no banco local
 update_forecast(forecast)
-
-#obtendo wmape
-
-wmape = wmape(updated_data['preco'].head().values, forecast['preco_previsto'].values)
-update_wmape(forecast['data'].iloc[0], wmape)
 
 #encerra conexão com o banco
 conn.close() 
