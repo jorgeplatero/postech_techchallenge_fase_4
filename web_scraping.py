@@ -100,7 +100,7 @@ def update_forecast(forecast):
 
 #função para validação dos modelos
 def wmape(y_true, y_pred):
-    return int((np.abs(y_true - y_pred).sum() / np.abs(y_true).sum()) * 100) / 100
+    return np.abs(y_true - y_pred).sum() / np.abs(y_true).sum()
 
 
 #função que insere dados do forecast no banco local
@@ -179,7 +179,7 @@ df_statsforecast['unique_id'] = 'Preco'
 df_statsforecast.dropna(inplace=True)
 
 #definindo dados de treino
-treino = df_statsforecast.loc[(df_statsforecast['ds'] >= '2000-01-01')] #dados de treino
+treino = df_statsforecast.loc[(df_statsforecast['ds'] >= '2000-01-01')] #dados de treino ---
 h = 5
 
 #implementando modelo
@@ -188,6 +188,7 @@ modelo.fit(treino)
 forecast = modelo.predict(h=5, level=[90])
 forecast = forecast[['ds', 'AutoARIMA']].reset_index(drop=True).rename(columns={'ds': 'data', 'AutoARIMA': 'preco_previsto'})
 forecast['preco_previsto'] = [int(n * 100) / 100 for n in forecast['preco_previsto']]
+forecast = forecast.sort_values('data', ascending=False)
 #salvando dados previstos
 last_forecast_path = 'dados/last_forecast.csv'
 forecast.to_csv(last_forecast_path, index=False)
