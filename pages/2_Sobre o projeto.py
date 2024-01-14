@@ -40,4 +40,4 @@ st.markdown(
     ''',
     unsafe_allow_html=True
 )
-st.image('img/arquitetura_mvp.png', caption='Arquitetura do Projeto')
+st.image('img/arquitetura_mvp.png', caption='Arquitetura do projeto')
