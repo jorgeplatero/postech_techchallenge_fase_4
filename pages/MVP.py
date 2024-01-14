@@ -54,15 +54,15 @@ fig_previsao.update_layout(
 #visualização no streamlit
 
 #logo fiap
-st.image('img/fiap.png')
+left, cent, right = st.columns(3)
+with right:
+    st.image('img/fiap.png')
 
 
 #título
-coluna1, coluna2 = st.columns(2)
-with coluna1:
-    st.title('Petróleo Brent')
-with coluna2:
-    st.image('img/oil_barrel.png', width=150)
+st.title('Petróleo Brent')
+st.image('img/oil_barrel.png', width=100)
+
 
 #série
 st.plotly_chart(fig, use_container_width=True)

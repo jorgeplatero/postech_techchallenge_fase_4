@@ -1,14 +1,12 @@
 import streamlit as st
 
-
-st.image('img/fiap.png')
-st.title('O projeto')
+left, cent, right = st.columns(3)
+with right:
+    st.image('img/fiap.png')
+st.title('Sobre o projeto')
 st.markdown(
     '''
         <div style="text-align: justify;">
-            <p>
-                Este projeto tem por objetivo o desenvolvimento de um dashboard interativo capaz de gerar insights relevantes para tomada de decisão no que diz respeito ao negócio do petróleo brent, o que inclui a implementação de um modelo de Machine Learning que traga o forecasting do preço do petróleo.
-            </p>
             <p>
                 Para o desenvolvimento deste projeto, optou por seguir a metodologia CRISP-DM (CRoss Industry Standard Process for Data Mining), largamente utilizada em projetos de dados. A CRISP-DM é composta por 6 etapas, são elas:
                 <ul>
@@ -33,13 +31,13 @@ st.markdown(
                 Os dados utilizados neste projeto estão disponibilizados em uma <b><a style='text-decoration:none', href='http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view'>tabela</a></b> no site do IPEA (Instituto de Pesquisa Econômica Aplicada) e serão importados por meio da biblioteca Pandas do Python. A tabela disponibiliza os preços por barril do petróleo bruto tipo Brent, negociados em dias úteis, não incluindo despesa de frete e seguro.
             </p>
             <p>
-                Após as etapas de análise do negócio (que pode ser verificada na Home desta aplicação), análise e preparação de dados, deu-se início à modelagem, utilizando as bibliotecas Prophet e Statsforecast. O modelo melhor avaliado foi o AutoARIMA, disponível no Statsforecast, motivo pelo qual o mesmo foi selecionado para a etapa de implementação do projeto.
+                Após as etapas de análise do negócio e análise e preparação de dados, deu-se início à modelagem, utilizando as bibliotecas Prophet e Statsforecast. O modelo melhor avaliado foi o AutoARIMA, disponível no Statsforecast, motivo pelo qual o mesmo foi selecionado para a etapa de implementação do projeto.
             </p>
             <p>
-                A implementação deu-se em duas aplicações distintas: o presente MVP, com dashboard que disponibiliza a série histórica e forecast semanal e um <b><a style='text-decoration:none', href='https://www.ibge.gov.br/estatisticas/downloads-estatisticas.html?caminho=Trabalho_e_Rendimento/Pesquisa_Nacional_por_Amostra_de_Domicilios_PNAD_COVID19/Microdados/Documentacao'>dashboard</a></b> interativo desenvolvido no Power BI. O projeto completo está disponível em <b><a style='text-decoration:none', href='https://github.com/jorgeplatero/postech_techchallenge_fase_4'>repositório</a></b> GitHub.
+                A implementação deu-se em duas aplicações distintas: o presente MVP, com dashboard que disponibiliza a série histórica e forecast semanal e um <b><a style='text-decoration:none', href='https://www.ibge.gov.br/estatisticas/downloads-estatisticas.html?caminho=Trabalho_e_Rendimento/Pesquisa_Nacional_por_Amostra_de_Domicilios_PNAD_COVID19/Microdados/Documentacao'>dashboard</a></b> interativo desenvolvido no Power BI. Os dados consumidos pelas aplicações são tratados, processados e disponibilizados em um script web scraping Python que consulta, semanalmente, a série disponibilizada no endereço do IPEA supracitado. O dashboard Power BI consome dados carregados em um banco de dados PostgreSQL pelo script, que também gera arquivos CSV consultados pelo MVP Streamlit no repositório GitHub.
             </p>
         </div>
     ''',
     unsafe_allow_html=True
 )
-st.image('img/arquitetura_projeto.png', caption='Arquitetura do Projeto')
+st.image('img/arquitetura.png', caption='Arquitetura do Projeto')
