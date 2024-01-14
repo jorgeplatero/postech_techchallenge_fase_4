@@ -100,7 +100,8 @@ def update_forecast(forecast):
 
 #função para validação dos modelos
 def wmape(y_true, y_pred):
-    return np.abs(y_true - y_pred).sum() / np.abs(y_true).sum()
+    wmape = np.abs(y_true - y_pred).sum() / np.abs(y_true).sum()
+    return wmape
 
 
 #função que insere dados do forecast no banco local

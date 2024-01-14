@@ -25,6 +25,7 @@ fig = px.line(
         'preco':'Preço (US$)',
         'data':'Data'
     }
+    
 )
 fig.update_layout(
     title='Preço do Petróleo Brent (US$)',
