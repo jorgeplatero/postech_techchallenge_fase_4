@@ -14,3 +14,8 @@ CREATE TABLE ipea.wmape(
     data date,
     wmape float
 )
+
+CREATE TABLE ipea.preco_dolar(
+    data date,
+    preco float
+)
