@@ -1,4 +1,4 @@
-# Dashboard com Modelo Preditivo de Preços do Petróleo Brent
+# Dataviz com Modelo Preditivo de Preços do Petróleo Brent
 
 ![logo do projeto](https://github.com/jorgeplatero/postech_techchallenge_fase_4/assets/99737345/2aa76bfc-1d97-4916-8de5-cc17b40d64ed)
 
