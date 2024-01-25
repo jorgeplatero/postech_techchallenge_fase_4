@@ -8,7 +8,7 @@ with right:
 st.title('O negócio')
 st.markdown(
     '''
-        <div style="text-align: justify;">
+        <div style='text-align: justify;'>
             <p>
                 A cotação do petróleo é definida por seu preço, em um determinado momento no mercado onde está sendo negociado. Desse modo, a cotação do petróleo é o resultado da oferta e demanda da commodity no mercado internacional. Nesse caso, a unidade de medida utilizada é de dólares por barril de petróleo. O petróleo Brent é todo o petróleo extraído no Mar do Norte e comercializado na Bolsa de Londres e foi batizado assim porque era extraído de uma base da Shell chamada Brent. 
             </p>

@@ -1,5 +1,6 @@
 import streamlit as st
 
+
 left, cent, right = st.columns(3)
 with right:
     st.image('img/fiap.png')
