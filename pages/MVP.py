@@ -4,6 +4,7 @@ import plotly.express as px
 
 
 dados = pd.read_csv('dados/preco_brent.csv')
+dados = dados[dados['data'] >= '2000-01-01']
 forecast = pd.read_csv('dados/last_forecast.csv')
 
 #tipando coluna de data
@@ -66,6 +67,8 @@ st.image('img/oil_barrel.png', width=100)
 
 #série
 st.plotly_chart(fig, use_container_width=True)
+st.markdown('O gráfico acima ilustra a série histórica do preço do barril de petróleo Brent desde os anos 2000.')
 
 #série prevista
 st.plotly_chart(fig_previsao, use_container_width=True)
+st.markdown('O gráfico acima mostra o forecast para as próximas 5 cotações do barril de petróleo Brent gerado com o modelo AutoARIMA implementado.')
