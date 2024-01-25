@@ -28,7 +28,7 @@ st.markdown(
     '''
         <div style="text-align: justify;">
             <p>
-                Os dados utilizados neste projeto estão disponibilizados em uma <b><a style='text-decoration:none', href='http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view'>tabela</a></b> no site do IPEA (Instituto de Pesquisa Econômica Aplicada) e serão importados por meio da biblioteca Pandas do Python. A tabela disponibiliza os preços por barril do petróleo bruto tipo Brent, negociados em dias úteis, não incluindo despesa de frete e seguro.
+                Os dados utilizados neste projeto estão disponibilizados em tabelas no site do IPEA (Instituto de Pesquisa Econômica Aplicada) e serão importados por meio da biblioteca Pandas do Python. A <b><a style='text-decoration:none', href='http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view'>tabela</a></b> fato disponibiliza os preços por barril do petróleo bruto tipo Brent, negociados em dias úteis, não incluindo despesa de frete e seguro. Também obtém-se uma <b><a style='text-decoration:none', href='http://www.ipeadata.gov.br/ExibeSerie.aspx?serid=38590&module=M'>tabela</a></b> com a série histórica do preço do dólar para o mesmo período. 
             </p>
             <p>
                 Após as etapas de análise do negócio, análise dos dados e preparação de dados, deu-se início à modelagem, utilizando as bibliotecas Prophet e Statsforecast. O modelo melhor avaliado foi o AutoARIMA, disponível no Statsforecast, motivo pelo qual o mesmo foi selecionado para a etapa de implementação do projeto.
@@ -40,4 +40,4 @@ st.markdown(
     ''',
     unsafe_allow_html=True
 )
-st.image('img/arquitetura_mvp.png', caption='Arquitetura do projeto')
+st.image('img/arquitetura.png', caption='Arquitetura do projeto')
