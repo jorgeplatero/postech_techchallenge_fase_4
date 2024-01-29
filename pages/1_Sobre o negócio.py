@@ -31,7 +31,7 @@ st.markdown(
                 A intenção dos investidores é comprar contratos futuros de petróleo, baseados nas cotações WTI e Brent, para fins de lucratividade do capital, adivinhando corretamente se os preços dos barris irão aumentar ou diminuir no futuro. Além disso, alguns produtores utilizam o mercado futuro para se proteger da volatilidade dos preços, travando receitas, que visam cobrir custos e garantir lucros da futura produção de petróleo. As refinarias, por exemplo, compram contratos futuros para travar os custos de compra, tendo em vista uma possível queda do petróleo.
             </p>
             <p>    
-                O preço do petróleo é influenciado por fatores como:
+                O preço do petróleo é influenciado por diversos fatores, que servem de insights para balizar a tomada de decisão dos investidores:
                 <ul>
                     <li>Mudanças no valor do dólar.</li>
                     <li>Alteração nas políticas da Organization of Petroleum Exporting Countries (OPEC).</li>
@@ -39,6 +39,7 @@ st.markdown(
                     <li>Implementação ou colapso de acordos internacionais.</li>
                     <li>Saúde da economia global.</li>
                 </ul>
+                Ademais, soluções de IA, como a proposta por este projeto, auxiliam nesse processo ao passo que trazem previsibilidade a curto prazo. 
             </p>
         </div>
     ''',
