@@ -5,6 +5,7 @@ left, cent, right = st.columns(3)
 with right:
     st.image('img/fiap.png')
 st.title('Sobre o projeto')
+st.image('img/oil_barrel.png', width=100)
 st.markdown(
     '''
         <div style="text-align: justify;">
@@ -35,7 +36,7 @@ st.markdown(
                 Após as etapas de análise do negócio, análise dos dados e preparação de dados, deu-se início à modelagem, utilizando as bibliotecas Prophet e Statsforecast. O modelo melhor avaliado foi o AutoARIMA, disponível no Statsforecast, motivo pelo qual o mesmo foi selecionado para a etapa de implementação do projeto.
             </p>
             <p>
-                A implementação produziu duas aplicações distintas: o presente MVP, com dashboard que disponibiliza a série histórica e forecast semanal e um <b><a style='text-decoration:none', href='https://app.powerbi.com/view?r=eyJrIjoiZDIxNjZmZDUtNjI0ZS00Y2FlLWE0ZWMtMjA0NTEwMDA1ZDhhIiwidCI6IjExZGJiZmUyLTg5YjgtNDU0OS1iZTEwLWNlYzM2NGU1OTU1MSIsImMiOjR9'>dashboard</a></b> interativo desenvolvido no Power BI. Os dados consumidos pelas aplicações são tratados, processados e disponibilizados em um script web scraping Python que consulta, semanalmente, a série disponibilizada no endereço do IPEA supracitado. O dashboard desenvovido no Power BI consome um banco de dados PostgreSQL carregados pelo script referido, que também exporta arquivos CSV consultados pelo MVP Streamlit no repositório GitHub.
+                A implementação produziu duas aplicações distintas: o presente MVP, com dashboard que disponibiliza a série histórica e forecast semanal e um <b><a style='text-decoration:none', href='https://app.powerbi.com/view?r=eyJrIjoiYjcxNGZlNmYtMDI4OS00NmJiLTk3Y2EtMWMyZWEyZWJmMTA4IiwidCI6IjExZGJiZmUyLTg5YjgtNDU0OS1iZTEwLWNlYzM2NGU1OTU1MSIsImMiOjR9'>dashboard</a></b> interativo desenvolvido no Power BI. Os dados consumidos pelas aplicações são tratados, processados e disponibilizados em um script web scraping Python que consulta, semanalmente, a série disponibilizada no endereço do IPEA supracitado. O dashboard desenvovido no Power BI consome um banco de dados PostgreSQL carregados pelo script referido, que também exporta arquivos CSV consultados pelo MVP Streamlit no repositório GitHub.
             </p>
         </div>
     ''',

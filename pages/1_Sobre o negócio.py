@@ -6,6 +6,7 @@ with right:
     st.image('img/fiap.png')
 
 st.title('O negócio')
+st.image('img/oil_barrel.png', width=100)
 st.markdown(
     '''
         <div style='text-align: justify;'>
