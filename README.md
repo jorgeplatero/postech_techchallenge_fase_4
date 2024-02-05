@@ -31,7 +31,7 @@ Série de preços do dólar: http://www.ipeadata.gov.br/ExibeSerie.aspx?serid=38
 
 ## Links para as Aplicações
 
-Dashboard Power BI: 
+Dashboard Power BI: https://app.powerbi.com/view?r=eyJrIjoiZDIxNjZmZDUtNjI0ZS00Y2FlLWE0ZWMtMjA0NTEwMDA1ZDhhIiwidCI6IjExZGJiZmUyLTg5YjgtNDU0OS1iZTEwLWNlYzM2NGU1OTU1MSIsImMiOjR9
 
 MVP Streamlit: https://postechtechchallengefase4-ceqwpwmwrl4eucsnvjjsjm.streamlit.app/
 
