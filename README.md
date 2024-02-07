@@ -10,7 +10,7 @@ Os dados utilizados neste projeto estão disponibilizados em tabelas no site do 
 
 A etapa de modelagem utiliza-se das bibliotecas Prophet e Statsforecast. O modelo melhor avaliado foi o AutoARIMA, disponível no Statsforecast, motivo pelo qual o mesmo foi selecionado para a etapa de implementação do projeto.
 
-A implementação produziu duas aplicações distintas: um MVP, com dashboard que disponibiliza a série histórica e forecast semanal e um dashboard interativo desenvolvido no Power BI que conta com outras métricas para análise e tomada de decisão. Os dados consumidos pelas aplicações são tratados, processados e disponibilizados em um script web scraping Python que consulta, semanalmente, a série disponibilizada no endereço do IPEA supracitado. O dashboard desenvovido no Power BI consome um banco de dados PostgreSQL carregados pelo script referido, que também exporta arquivos CSV consultados pelo MVP Streamlit no repositório GitHub.
+A implementação produziu duas aplicações distintas: um MVP, com dashboard que disponibiliza a série histórica e forecast semanal e um dashboard interativo desenvolvido no Power BI que conta com outras métricas para análise e tomada de decisão. Os dados consumidos pelas aplicações são tratados, processados e disponibilizados em um script web scraping Python que consulta, semanalmente, a série disponibilizada no endereço do IPEA supracitado. O dashboard desenvovido no Power BI consome um banco de dados PostgreSQL carregado pelo script referido, que também exporta arquivos CSV consultados pelo MVP Streamlit no repositório GitHub.
 
 **Arquitetura do projeto**
 
