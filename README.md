@@ -25,15 +25,16 @@ A implementação produziu duas aplicações distintas: um MVP, com dashboard qu
 
 ## Fontes de Dados
 
-Série de preços do petróleo brent: http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view
+Série de preços do petróleo brent: <a style="text-decoration:none;" href="http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view" target="_blank">link</a>.
 
-Série de preços do dólar: http://www.ipeadata.gov.br/ExibeSerie.aspx?serid=38590&module=M
+Série de preços do dólar: <a style="text-decoration:none;" href="http://www.ipeadata.gov.br/ExibeSerie.aspx?serid=38590&module=M" target="_blank">link</a>.
 
 ## Links para as Aplicações
 
-Dashboard Power BI: https://app.powerbi.com/view?r=eyJrIjoiYjcxNGZlNmYtMDI4OS00NmJiLTk3Y2EtMWMyZWEyZWJmMTA4IiwidCI6IjExZGJiZmUyLTg5YjgtNDU0OS1iZTEwLWNlYzM2NGU1OTU1MSIsImMiOjR9
+Dashboard Power BI: <a style="text-decoration:none;" href="https://app.powerbi.com/view?r=eyJrIjoiYjcxNGZlNmYtMDI4OS00NmJiLTk3Y2EtMWMyZWEyZWJmMTA4IiwidCI6IjExZGJiZmUyLTg5YjgtNDU0OS1iZTEwLWNlYzM2NGU1OTU1MSIsImMiOjR9" target="_blank">link</a>.
 
-MVP Streamlit: https://postechtechchallengefase4-ceqwpwmwrl4eucsnvjjsjm.streamlit.app/
+
+MVP Streamlit: <a style="text-decoration:none;" href="https://postechtechchallengefase4-ceqwpwmwrl4eucsnvjjsjm.streamlit.app/" target="_blank">link</a>.
 
 ## Colaboradores
 
